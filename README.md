@@ -12,3 +12,4 @@ Evan Willford's Flask REST API for the Uplight Interview
 * Python3 builtin docs: https://docs.python.org/3/library/functions.html
 * NumPy docs: https://numpy.org/doc/stable/reference/generated/numpy.bitwise_xor.html
 * Online HMAC generator (with SHA3-256 option, for test data): https://www.liavaag.org/English/SHA-Generator/HMAC/
+* Unittest.mock (because I always have to reference this): https://docs.python.org/3/library/unittest.mock.html

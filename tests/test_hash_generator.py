@@ -1,4 +1,4 @@
-from unittest.mock import MagicMock
+from unittest.mock import MagicMock, patch
 from hash_generator import hash_generator
 
 
@@ -10,16 +10,12 @@ def test_generate_hash():
     assert len(output_value) == hash_generator.SHA3_256_OUTPUT_SIZE * 2  # hex digest is double
 
 
-def test_compute_full_hmac():
+@patch("hash_generator.hash_generator.sha3_256")
+@patch("hash_generator.hash_generator.bytearray_bitwise_xor")
+@patch("hash_generator.hash_generator.compute_block_sized_key")
+def test_compute_full_hmac(mock_compute_block_sized_key, mock_xor, mock_hash):
     """Verify that the compute_full_hmac function calls the expected functions"""
-    #TODO: enhance this to verify calls
-    hash_generator.compute_block_sized_key = MagicMock()
-    mock_compute_block_sized_key = hash_generator.compute_block_sized_key
-    hash_generator.bytearray_bitwise_xor = MagicMock()
-    mock_xor = hash_generator.bytearray_bitwise_xor
-    hash_generator.bytearray_bitwise_xor.return_value = bytearray(b"1"*hash_generator.SHA3_256_BLOCK_SIZE)
-    hash_generator.sha3_256 = MagicMock()
-    mock_hash = hash_generator.sha3_256
+    mock_xor.return_value = bytearray(b"1"*hash_generator.SHA3_256_BLOCK_SIZE)
 
     hash_generator.compute_full_hmac(
         key=bytearray("test_key", encoding=hash_generator.STRING_ENCODING),
