@@ -1,15 +1,34 @@
+from unittest.mock import MagicMock
 from hash_generator import hash_generator
 
 
 def test_generate_hash():
-    output_value = hash_generator.generate_hash(input_data={"message": "test_data"})
-    expected_value = "f00bfe4bd2f4bf2768d6977cda899708e9a57794802da395524f153ada532e7d"
-    assert output_value == expected_value, \
-        f"expected {expected_value}, got {output_value}"
+    """Verify that generate_hash returns the expected values"""
+    input_data = {"message": "MDAwMDAwMDAtMDAwMC0wMDBiLTAxMmMtMDllZGU5NDE2MDAz"}
+    output_value = hash_generator.generate_hash(input_data=input_data)
+    print(f"{output_value}")
+    assert len(output_value) == hash_generator.SHA3_256_OUTPUT_SIZE * 2  # hex digest is double
 
 
 def test_compute_full_hmac():
-    assert False is True
+    """Verify that the compute_full_hmac function calls the expected functions"""
+    #TODO: enhance this to verify calls
+    hash_generator.compute_block_sized_key = MagicMock()
+    mock_compute_block_sized_key = hash_generator.compute_block_sized_key
+    hash_generator.bytearray_bitwise_xor = MagicMock()
+    mock_xor = hash_generator.bytearray_bitwise_xor
+    hash_generator.bytearray_bitwise_xor.return_value = bytearray(b"1"*hash_generator.SHA3_256_BLOCK_SIZE)
+    hash_generator.sha3_256 = MagicMock()
+    mock_hash = hash_generator.sha3_256
+
+    hash_generator.compute_full_hmac(
+        key=bytearray("test_key", encoding=hash_generator.STRING_ENCODING),
+        message=bytearray("test_message", encoding=hash_generator.STRING_ENCODING)
+    )
+
+    mock_compute_block_sized_key.assert_called()
+    mock_xor.assert_called()  # TODO: enhance with actual calls
+    mock_hash.assert_called()
 
 
 def test_compute_block_sized_key_greater_than_block_size():
@@ -27,6 +46,15 @@ def test_compute_block_sized_key_less_than_block_size():
     dummy_str = "a"
     dummy_key = bytearray(dummy_str, encoding="utf-8")
     assert len(dummy_key) < hash_generator.SHA3_256_BLOCK_SIZE
+    hash_digest_value = hash_generator.compute_block_sized_key(key=dummy_key)
+    assert len(hash_digest_value) == hash_generator.SHA3_256_BLOCK_SIZE
+
+
+def test_compute_block_sized_key_equal_to_block_size():
+    """Ensure that a bytearray the length of the maximum block size is returned unmodified"""
+    dummy_str = "a" * hash_generator.SHA3_256_BLOCK_SIZE
+    dummy_key = bytearray(dummy_str, encoding="utf-8")
+    assert len(dummy_key) == hash_generator.SHA3_256_BLOCK_SIZE
     hash_digest_value = hash_generator.compute_block_sized_key(key=dummy_key)
     assert len(hash_digest_value) == hash_generator.SHA3_256_BLOCK_SIZE
 
