@@ -17,7 +17,7 @@ def test_homepage(client):
 def test_post_generate_token_data_input_returns_200(client, app):
     """Verify that sending valid inputs and headers to the app returns a 200 and expected output"""
     test_dict = json.dumps({"id": "test"})
-    expected_result = {"id": "test", "signature": "signatureValue"}
+    expected_result = {"id": "test", "signature": "6948b9f4f47eb0dd294356a6c1e12024f2a940eb93dd16a4b557f002abe5788b"}
     response = client.post("/generate-token", headers={"Content-Type": "application/json"}, data=test_dict)
 
     assert_and_log(expected_value=SUCCESS_CODE, actual_value=response.status_code)

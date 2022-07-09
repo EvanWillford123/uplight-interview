@@ -32,7 +32,7 @@ def create_app(test_config=None):
     @app.get("/")
     def homepage():
         """Return a homepage for sanity-checking and helping to build out tests"""
-        return "<p>Hello, world!</p>"
+        return "<p>Usage: please send a POST request to the /generate-token endpoint to receive a HMAC signature.</p>"
 
     @app.post("/generate-token")
     def generate_token():
@@ -49,7 +49,6 @@ def create_app(test_config=None):
         # (i.e. one k/v pair, message of appropriate length??)
         if not len(request_json.keys()) == 1:
             abort(400)  # TODO Add messaging for usability
-        # TODO: Enforce particular string encoding? For now, assume UTF-8
         # TODO: Sanitize input
 
         try:
